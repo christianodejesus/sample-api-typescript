@@ -1,5 +1,7 @@
-import app from './app'
+import App from './app'
 
-const server = app.listen(3080)
+const app = new App().app
+
+const server = app.listen(Number(process.env.API_PORT))
 
 export default server
