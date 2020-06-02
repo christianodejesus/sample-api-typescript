@@ -1,6 +1,4 @@
-import App from './app'
-
-const app = new App().app
+import app from './app'
 
 const server = app.listen(Number(process.env.API_PORT))
 
