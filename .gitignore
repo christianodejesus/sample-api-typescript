@@ -62,5 +62,5 @@ typings/
 .vscode
 
 # package manager's .lock files
-# yarn.lock
+yarn.lock
 package-lock.json
