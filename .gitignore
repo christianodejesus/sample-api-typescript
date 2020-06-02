@@ -26,8 +26,8 @@ coverage
 # node-waf configuration
 .lock-wscript
 
-# Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
+# builded project files
+build
 dist
 
 # Dependency directories
@@ -60,3 +60,7 @@ typings/
 
 # VSCode config files
 .vscode
+
+# package manager's .lock files
+# yarn.lock
+package-lock.json
