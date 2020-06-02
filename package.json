@@ -3,24 +3,30 @@
   "version": "1.0.0",
   "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon ./src/server.ts",
+    "dev": "npx ts-node-dev --respawn --clear --transpileOnly ./src/server.ts",
     "lint": "./node_modules/.bin/eslint ./src",
-    "build": "sucrase ./src -d ./dist --transforms typescript,imports"
+    "prebuild": "rm -Rf build/**",
+    "build": "./node_modules/.bin/tsc --outDir ./build",
+    "build:dev": "npm run build -- --sourceMap"
   },
   "license": "MIT",
   "dependencies": {
     "@koa/cors": "^3.1.0",
     "@koa/router": "^9.0.1",
+    "dotenv": "^8.2.0",
     "koa": "^2.12.0",
     "koa-bodyparser": "^4.3.0",
     "mongoose": "^5.9.16"
   },
   "devDependencies": {
+    "@types/dotenv": "^8.2.0",
     "@types/koa": "^2.11.3",
     "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-logger": "^3.1.1",
     "@types/koa__cors": "^3.0.1",
     "@types/koa__router": "^8.0.2",
     "@types/mongoose": "^5.7.21",
+    "@types/node": "^14.0.9",
     "@typescript-eslint/eslint-plugin": "^3.1.0",
     "@typescript-eslint/parser": "^3.1.0",
     "eslint": "^7.1.0",
@@ -31,10 +37,10 @@
     "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "nodemon": "^2.0.4",
+    "koa-logger": "^3.2.1",
     "prettier": "^2.0.5",
-    "sucrase": "^3.15.0",
     "ts-node": "^8.10.2",
+    "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.9.3"
   }
 }

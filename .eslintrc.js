@@ -4,9 +4,9 @@ module.exports = {
     node: true
   },
   extends: [
+    'standard',
     'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint',
-    'standard'
+    'prettier/@typescript-eslint'
   ],
   globals: {
     Atomics: 'readonly',
@@ -18,5 +18,7 @@ module.exports = {
     sourceType: 'module'
   },
   plugins: ['@typescript-eslint'],
-  rules: {}
+  rules: {
+    'no-console': 'error'
+  }
 }

@@ -1,2 +1,2 @@
-# tsnode
-Project to learn TypeScript
+# sample-api-typescript
+Sample Rest API Project with TypeScript
