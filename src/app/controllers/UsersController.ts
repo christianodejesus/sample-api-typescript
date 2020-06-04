@@ -1,7 +1,7 @@
 import { ParameterizedContext } from 'koa'
 import User from '../schemas/User'
 
-class UserController {
+class UsersController {
   public async index (ctx: ParameterizedContext): Promise<ParameterizedContext> {
     const users = await User.find()
     ctx.body = users
@@ -10,14 +10,20 @@ class UserController {
   }
 
   public async create (ctx: ParameterizedContext): Promise<ParameterizedContext> {
-    const { email, firstName, lastName } = ctx.request.body
+    const { email, name, password } = ctx.request.body
+
     const user = await User.create({
-      email, firstName, lastName
+      name,
+      email,
+      password
     })
 
-    ctx.body = user
+    ctx.body = {
+      user
+    }
+
     return ctx
   }
 }
 
-export default UserController
+export default UsersController
