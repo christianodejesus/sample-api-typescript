@@ -4,9 +4,10 @@ module.exports = {
     node: true
   },
   extends: [
-    'standard',
     'plugin:@typescript-eslint/recommended',
-    'prettier/@typescript-eslint'
+    'plugin:@typescript-eslint/eslint-recommended',
+    'prettier/@typescript-eslint',
+    'standard'
   ],
   globals: {
     Atomics: 'readonly',
