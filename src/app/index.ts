@@ -11,7 +11,7 @@ config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env' })
 class App {
   public app: Koa
 
-  public constructor() {
+  public constructor () {
     this.app = new Koa()
 
     this.middlewares()
@@ -19,7 +19,7 @@ class App {
     this.routes()
   }
 
-  private middlewares(): void {
+  private middlewares (): void {
     // dev logger middleware
     if (process.env.NODE_ENV === 'development') {
       this.app.use(KoaLogger())
@@ -47,7 +47,7 @@ class App {
     })
   }
 
-  private routes(): void {
+  private routes (): void {
     // redirects routes from /* to /api/*
     this.app.use(async (ctx, next) => {
       if (ctx.url === '/') {
@@ -62,7 +62,7 @@ class App {
     this.app.use(router.allowedMethods())
   }
 
-  private database() {
+  private database () {
     const userStr = process.env.DB_USER !== undefined && process.env.DB_USER !== ''
       ? `${process.env.DB_USER}:${process.env.DB_PASS}@`
       : ''
