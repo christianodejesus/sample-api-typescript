@@ -2,30 +2,41 @@ import Router from '@koa/router'
 import fs from 'fs'
 import path from 'path'
 
-const mainRouter = new Router({
-  prefix: '/api'
+const publicMainRouter = new Router({
+  prefix: '/public'
 })
 
-mainRouter.get('/', ctx => {
+const privateMainRouter = new Router({
+  prefix: '/pvt'
+})
+
+publicMainRouter.get('/', ctx => {
   ctx.body = {
-    name: 'Ecoleta Rest API',
+    name: 'Sample Rest API',
     version: process.env.API_VERSION || '1.0.0'
   }
 })
 
 const ext = path.extname(__filename)
 
-// import all *Routes files in the directory
-fs.readdirSync(__dirname)
-  .filter(
-    file =>
-      file.indexOf('.') !== 0 &&
-      file !== path.basename(__filename) &&
-      file.slice(-9) === `Routes${ext}`
-  )
-  .forEach(async file => {
-    const childRouter = await import(path.join(__dirname, file)).then(module => module.default)
-    mainRouter.use(childRouter.routes(), childRouter.allowedMethods())
-  })
+const loadRouterFiles = (basedir: string, router: Router): void => {
+  // import all *Routes files in the directory
+  fs.readdirSync(basedir)
+    .filter(
+      file =>
+        file.indexOf('.') !== 0 &&
+        file !== path.basename(__filename) &&
+        file.slice(-9) === `Routes${ext}`
+    )
+    .forEach(async file => {
+      const childRouter = await import(path.join(basedir, file)).then(module => module.default)
+      router.use(childRouter.routes(), childRouter.allowedMethods())
+    })
+}
 
-export default mainRouter
+loadRouterFiles(`${__dirname}/public`, publicMainRouter)
+loadRouterFiles(`${__dirname}/private`, privateMainRouter)
+
+export default {
+  publicMainRouter, privateMainRouter
+}

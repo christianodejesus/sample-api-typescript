@@ -13,17 +13,17 @@ class AuthController {
     const fields: ILoginValidation = {}
 
     if (email === undefined || email === null) {
-      fields.email = 'Email não informado'
+      fields.email = 'Missing email'
     }
 
     if (password === undefined || password === null) {
-      fields.password = 'Senha não informada'
+      fields.password = 'Missing password'
     }
 
     if (Object.keys(fields).length > 0) {
       ctx.status = httpStatus.BAD_REQUEST
       ctx.body = {
-        message: 'Atenção, foram encontrados erro(s) no formulário. Por favor, verifique os dados informados.',
+        message: 'Validation errors. Please, verify data sent.',
         fields
       }
     } else {
@@ -33,12 +33,12 @@ class AuthController {
       })
 
       if (!user) {
-        ctx.status = httpStatus.NOT_FOUND
-        ctx.body = { message: 'Usuário não encontrado' }
+        ctx.status = httpStatus.BAD_REQUEST
+        ctx.body = { message: 'User not found' }
       } else {
         if (user.passwordHash === null) {
-          ctx.status = httpStatus.UNAUTHORIZED
-          ctx.body = { message: 'A conta do usuário não foi ativada' }
+          ctx.status = httpStatus.BAD_REQUEST
+          ctx.body = { message: 'User account is not activated' }
         } else {
           if (user.checkPassword(password)) {
             const { id, name, email } = user
@@ -51,8 +51,8 @@ class AuthController {
               token: user.generateToken()
             }
           } else {
-            ctx.status = httpStatus.UNAUTHORIZED
-            ctx.body = { message: 'Senha inválida' }
+            ctx.status = httpStatus.BAD_REQUEST
+            ctx.body = { message: 'Invalid password' }
           }
         }
       }

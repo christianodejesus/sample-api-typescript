@@ -18,7 +18,7 @@
   "version": "1.0.0",
   "main": "src/server.js",
   "scripts": {
-    "dev": "npx ts-node-dev --respawn --clear --transpileOnly ./src/server.ts",
+    "dev": "npx ts-node-dev --ignore-watch node_modules --respawn --clear --transpileOnly --no-notify ./src/server.ts",
     "lint": "./node_modules/.bin/eslint ./src",
     "prebuild": "rm -Rf build/**",
     "build": "./node_modules/.bin/tsc --outDir ./build",
@@ -34,6 +34,7 @@
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.12.0",
     "koa-bodyparser": "^4.3.0",
+    "koa-jwt": "^4.0.0",
     "mongoose": "^5.9.16"
   },
   "devDependencies": {

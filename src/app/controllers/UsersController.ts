@@ -1,7 +1,8 @@
 import { ParameterizedContext } from 'koa'
 import User from '../schemas/User'
+import AppController from './AppController'
 
-class UsersController {
+class UsersController extends AppController {
   public async index (ctx: ParameterizedContext): Promise<ParameterizedContext> {
     const users = await User.find()
     ctx.body = users

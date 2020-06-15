@@ -34,8 +34,7 @@ const UserSchema = new Schema({
     default: true
   }
 }, {
-  timestamps: true,
-  autoIndex: true
+  timestamps: true
 })
 
 UserSchema.virtual('password')
@@ -57,7 +56,7 @@ UserSchema.method('generateToken', function (this: IUserDocument, expiration?: s
   const secret = process.env.APP_SECRET || ''
 
   const token = jwt.sign(
-    { _id: this.id },
+    { _id: this.id, name: this.name, email: this.email },
     secret,
     { expiresIn: expiration || '1 day' }
   )

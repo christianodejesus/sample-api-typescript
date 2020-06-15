@@ -1,14 +1,17 @@
 import cors from '@koa/cors'
 import { config } from 'dotenv'
+import httpStatus from 'http-status'
 import Koa, { Next, ParameterizedContext } from 'koa'
 import bodyparser from 'koa-bodyparser'
+import koaJWT from 'koa-jwt'
 import KoaLogger from 'koa-logger'
 import mongoose from 'mongoose'
-import router from './routes'
+import routes from './routes'
 
 config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env' })
 
 class App {
+  public static decodedTokenDataKey = 'tokenData'
   public app: Koa
 
   public constructor () {
@@ -36,33 +39,51 @@ class App {
       try {
         await next()
       } catch (err) {
-        ctx.status = 500
-        ctx.body = { message: 'An unexpected error are occurred' }
+        ctx.body = {}
 
-        if (process.env.NODE_ENV === 'development') {
-          const { message, name } = Error(err)
-          ctx.body.error = { message, name }
+        if (err.name === 'UnauthorizedError') {
+          ctx.status = httpStatus.UNAUTHORIZED
+          switch (err.originalError.name) {
+            case 'TokenExpiredError':
+              ctx.body.message = 'Token expired'
+              break
+
+            case 'JsonWebTokenError':
+              ctx.body.message = 'Invalid token'
+              break
+          }
+        } else {
+          ctx.status = httpStatus.INTERNAL_SERVER_ERROR
+          ctx.body = { message: 'An unexpected error are occurred' }
+
+          if (process.env.NODE_ENV === 'development') {
+            const { name, message, stack, parent, original } = err
+            ctx.body.error = {
+              name, message, stack, parent, original
+            }
+          }
         }
       }
     })
   }
 
   private routes (): void {
-    // redirects routes from /* to /api/*
-    this.app.use(async (ctx, next) => {
-      if (ctx.url === '/') {
-        ctx.redirect('/api')
-      }
+    // use the public app routes
+    this.app.use(routes.publicMainRouter.routes())
+    this.app.use(routes.publicMainRouter.allowedMethods())
 
-      await next()
-    })
+    // protecting private routes under JWT auth validation
+    this.app.use(koaJWT({
+      secret: process.env.APP_SECRET || '',
+      key: App.decodedTokenDataKey
+    }))
 
-    // use the app routes
-    this.app.use(router.routes())
-    this.app.use(router.allowedMethods())
+    // use the private app routes
+    this.app.use(routes.privateMainRouter.routes())
+    this.app.use(routes.privateMainRouter.allowedMethods())
   }
 
-  private database () {
+  private database (): void {
     const userStr = process.env.DB_USER !== undefined && process.env.DB_USER !== ''
       ? `${process.env.DB_USER}:${process.env.DB_PASS}@`
       : ''
@@ -74,7 +95,9 @@ class App {
 
     mongoose.connect(connectionStr, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
+      autoIndex: true,
+      useCreateIndex: true
     })
   }
 }
